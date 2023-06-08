@@ -9,12 +9,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $includeNumbers = isset($_POST['include_numbers']);
     $includeSymbols = isset($_POST['include_symbols']);
 
-
-    // Generate the password
-    try {
-        $generatedPassword = generatePassword($passLength, $repetitiveChars, $includeLetters, $includeNumbers, $includeSymbols);
-    } catch (Exception $e) {
-        echo $e;
+    if ($repetitiveChars || $includeLetters || $includeNumbers || $includeSymbols) {
+        // If inputs are valid generate the password
+        $isValidInput = true;
+        try {
+            $generatedPassword = generatePassword($passLength, $repetitiveChars, $includeLetters, $includeNumbers, $includeSymbols);
+        } catch (Exception $e) {
+            echo $e;
+        }
+    } else {
+         $isValidInput = false;
     }
 }
 ?>
@@ -33,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div style="height: 100vh;" class="container d-flex flex-column justify-content-center align-items-center">
         <form method="POST" class="row w-50 g-4 rounded-3 p-4 bg-secondary-subtle">
-            <div class="col-6 d-flex align-items-center justify-content-end">
-                <p>Password length:</p>
+            <div class="col-6 d-flex justify-content-end">
+                <label for="pass-length" class="mt-2">Password length:</label>
             </div>
             <div class="col-6">
                 <input type="number" min="5" value="5" class="form-control" id="pass-length" name="pass_length" aria-describedby="passHelp">
@@ -52,8 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="repetitive_chars" id="flexRadioDefault2"
-                           checked>
+                    <input class="form-check-input" type="radio" name="repetitive_chars" id="flexRadioDefault2" checked>
                     <label class="form-check-label" for="flexRadioDefault2">
                         No
                     </label>
