@@ -1,3 +1,24 @@
+<?php
+include __DIR__ . '/functions.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get form input values
+    $passLength = $_POST['pass_length'];
+    $repetitiveChars = isset($_POST['repetitive_chars']);
+    $includeLetters = isset($_POST['include_letters']);
+    $includeNumbers = isset($_POST['include_numbers']);
+    $includeSymbols = isset($_POST['include_symbols']);
+
+
+    // Generate the password
+    try {
+        $generatedPassword = generatePassword($passLength, $repetitiveChars, $includeLetters, $includeNumbers, $includeSymbols);
+    } catch (Exception $e) {
+        echo $e;
+    }
+}
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,13 +28,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Password Generator</title>
 
-    <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
 
-    <div style="height: 100vh;" class="container d-flex justify-content-center align-items-center">
-        <form action="pass_generator.php" class="row w-50 g-4 rounded-3 p-4 bg-secondary-subtle">
+    <div style="height: 100vh;" class="container d-flex flex-column justify-content-center align-items-center">
+        <form method="POST" class="row w-50 g-4 rounded-3 p-4 bg-secondary-subtle">
             <div class="col-6 d-flex align-items-center justify-content-end">
                 <p>Password length:</p>
             </div>
@@ -27,13 +46,13 @@
             </div>
             <div class="col-6">
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="repetitive_chars" id="flexRadioDefault1">
                     <label class="form-check-label" for="flexRadioDefault1">
                         Yes
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
+                    <input class="form-check-input" type="radio" name="repetitive_chars" id="flexRadioDefault2"
                            checked>
                     <label class="form-check-label" for="flexRadioDefault2">
                         No
@@ -45,29 +64,40 @@
             </div>
             <div class="col-6">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="letters-check">
+                    <input class="form-check-input" type="checkbox" name="include_letters" id="letters-check">
                     <label class="form-check-label" for="letters-check">
                         Letters
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="nums-check">
+                    <input class="form-check-input" type="checkbox" name="include_numbers" id="nums-check">
                     <label class="form-check-label" for="nums-check">
                         Numbers
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="chars-check">
+                    <input class="form-check-input" type="checkbox" name="include_symbols" id="chars-check">
                     <label class="form-check-label" for="chars-check">
                         Symbols
                     </label>
                 </div>
             </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">Generate Password</button>
-                <button type="submit" class="ms-1 btn btn-warning">Reset</button>
+            <div class="col-12 d-flex justify-content-around">
+                <button type="submit" class="btn btn-primary w-25 p-0">Generate Password</button>
+                <button type="reset" class="ms-1 btn btn-warning w-25 p-1">Reset</button>
             </div>
         </form>
+
+        <div class="row mt-3 p-4 rounded-3 bg-secondary-subtle text-center">
+            <h5>Generated password: </h5>
+            <h4 class="text-success">
+                <?php
+                if (isset($generatedPassword)) {
+                    echo "<h4 class=\"text-success\">$generatedPassword</h4>";
+                }
+                ?>
+            </h4>
+        </div>
     </div>
 
 
