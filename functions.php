@@ -42,6 +42,7 @@ function generatePassword($length, $repetitive, $includeLetters, $includeNumbers
     return $password;
 }
 
-function inputIsValid() {
+function inputIsValid()
+{
 
 }

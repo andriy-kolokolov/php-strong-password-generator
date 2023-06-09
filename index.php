@@ -1,18 +1,18 @@
 <?php
 include __DIR__ . '/functions.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Get form input values
-    $passLength = $_POST['pass_length'];
-    $repetitiveChars = isset($_POST['repetitive_chars']);
-    $includeLetters = isset($_POST['include_letters']);
-    $includeNumbers = isset($_POST['include_numbers']);
-    $includeSymbols = isset($_POST['include_symbols']);
+    $passLength = $_GET['pass_length'];
+    $repetitiveChars = isset($_GET['repetitive_chars']);
+    $includeLetters = isset($_GET['include_letters']);
+    $includeNumbers = isset($_GET['include_numbers']);
+    $includeSymbols = isset($_GET['include_symbols']);
 
     if ($repetitiveChars || $includeLetters || $includeNumbers || $includeSymbols) {
         // If inputs are valid generate the password
-        $isValidInput = true;
         try {
+            $isValidInput = true;
             $generatedPassword = generatePassword($passLength, $repetitiveChars, $includeLetters, $includeNumbers, $includeSymbols);
         } catch (Exception $e) {
             echo $e;
@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          $isValidInput = false;
     }
 }
+
 ?>
 
 <!doctype html>
@@ -31,17 +32,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Password Generator</title>
-
 </head>
 <body>
-
     <div style="height: 100vh;" class="container d-flex flex-column justify-content-center align-items-center">
-        <form method="POST" class="row w-50 g-4 rounded-3 p-4 bg-secondary-subtle">
+
+        <!-- TODO FIX SO IT DIPLAYS ALERT IF INPUT IS NOT VALID -->
+
+        <?php if (!$isValidInput && $_SERVER['REQUEST_METHOD'] === 'GET'): ?>
+            <div class="alert alert-danger" role="alert">
+                Invalid input! Please check your form values.
+            </div>
+        <?php endif; ?>
+
+        <!-- FORM -->
+        <form method="GET" class="row w-50 g-4 rounded-3 p-4 bg-secondary-subtle">
+
             <div class="col-6 d-flex justify-content-end">
                 <label for="pass-length" class="mt-2">Password length:</label>
             </div>
             <div class="col-6">
-                <input type="number" min="5" value="5" class="form-control" id="pass-length" name="pass_length" aria-describedby="passHelp">
+                <input type="number" min="5" value="15" class="form-control" id="pass-length" name="pass_length" aria-describedby="passHelp">
                 <div id="passHelp" class="form-text">Min length: 5</div>
             </div>
 
@@ -67,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="col-6">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="include_letters" id="letters-check">
+                    <input class="form-check-input" type="checkbox" name="include_letters" id="letters-check" checked>
                     <label class="form-check-label" for="letters-check">
                         Letters
                     </label>
@@ -93,16 +103,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="row mt-3 p-4 rounded-3 bg-secondary-subtle text-center">
             <h5>Generated password: </h5>
-            <h4 class="text-success">
                 <?php
                 if (isset($generatedPassword)) {
                     echo "<h4 class=\"text-success\">$generatedPassword</h4>";
                 }
                 ?>
-            </h4>
         </div>
     </div>
-
 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
